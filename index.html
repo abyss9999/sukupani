@@ -1,0 +1,89 @@
+<html lang="ja">
+<head>
+<script src="https://code.createjs.com/easeljs-0.8.1.min.js"></script>
+<script src="https://code.createjs.com/tweenjs-0.6.1.min.js"></script>
+<script src="https://code.createjs.com/movieclip-0.8.1.min.js"></script>
+<script src="https://code.createjs.com/preloadjs-0.6.1.min.js"></script>
+<style>
+canvas{
+	background-color: black;
+}
+</style>
+</head>
+<body>
+<a id="download_link"></a>
+<input id="input" type="number"><button onclick="init()">LOAD</button>
+<input id="text" type="text"><button onclick="addCanvas()">ADD</button>
+<button onclick="clearCanvas()">消去</button>
+<button onclick="deleteCanvas()">削除</button>
+<button onclick="saveCanvas()">保存</button>
+<br>
+<canvas id="canvas" width="400" height="500"></canvas>
+<script>
+var canvas, stage;
+function init() {
+	console.clear();
+	canvas = document.getElementById("canvas");
+	var script = document.createElement("script")
+	script.type = "text/javascript";
+	script.src = "https://sukupani.sg-sgp.net/sukupani/js/punish/punish/punish_" + document.getElementById("input").value + ".js";
+	script.charset = "UTF-8";
+	document.body.appendChild(script);
+	script.onload = function(){
+		var loader = new createjs.LoadQueue(false);
+		loader.addEventListener("fileload", handleFileLoad);
+		loader.addEventListener("complete", handleComplete);
+		loader.loadManifest(lib.properties.manifest);
+	};
+	lib = "";
+}
+
+function handleFileLoad(evt) {
+	if (evt.item.type == "image") { images[evt.item.id] = evt.result; }
+}
+
+function handleComplete() {
+	instance = ["base"];
+	createCanvas(instance);
+	console.log(lib);
+}
+
+function createCanvas(instance) {
+	stage = new createjs.Stage(canvas);
+	instance.forEach(function(value){
+		stage.addChild(eval("new lib." + value + "()"));
+	});
+	stage.update();
+}
+
+function addCanvas(){
+	partsArray = document.getElementById("text").value.split(",");
+	partsArray.forEach(function(value){
+		stage.addChild(eval("new lib." + value + "()"));
+	});
+	stage.update();
+}
+
+function clearCanvas(){
+	stage = new createjs.Stage(canvas);
+	stage.update();
+}
+
+function deleteCanvas(){
+	stage.children[0].visible = false;
+	stage.update();
+}
+
+function saveCanvas(){
+	var downloadLink = document.getElementById('download_link');
+	downloadLink.href = canvas.toDataURL('image/png');
+	downloadLink.click();
+}
+
+window.onload = function(){
+	document.getElementById("input").value = "4094";
+	init();
+}
+</script>
+</body>
+</html>
